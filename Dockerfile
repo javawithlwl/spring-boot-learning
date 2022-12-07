@@ -1,9 +1,6 @@
-FROM maven:3.8.6-openjdk-18-slim AS build
-COPY src /home/app/src
-COPY pom.xml /home/app
-RUN mvn -f /home/app/pom.xml clean package
-
-FROM openjdk:19
-COPY --from=build /home/app/target/simple-spring-application-0.0.1-SNAPSHOT.jar /usr/local/lib/my-app.jar
-EXPOSE 8080
-ENTRYPOINT ["java","-jar","/usr/local/lib/my-app.jar"]
+FROM maven:3.8.6-openjdk-11-slim AS build
+RUN mkdir /home/app
+copy . /home/app
+RUN cd /home/app && mvn package
+RUN cp /home/app/target/*.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
